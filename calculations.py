@@ -71,3 +71,17 @@ def compute_r_v_geocentric(r_topo, v_topo, lat, lst_time, elevation_sea_level):
 
     v = rho_dot + cross(omega_wE, r)
     return r, v
+
+
+class Math(object):
+    """
+    docstring
+    """
+    def __init__(self):
+        pass
+
+    def get_magnitude(self, vector):
+        sum = 0
+        for i in vector:
+            sum += i ** 2
+        return math.sqrt(sum)
