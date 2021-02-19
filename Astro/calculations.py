@@ -22,13 +22,14 @@ round_off_factor = 5
 # rotation of the earth rate
 
 def compute_station_coords_ellipsoid(lst_time, lat, elevation_sea_level):
+
     x = abs(1 / ( math.sqrt(1 - math.pow(eccentricity,2) * math.sin(lat))) + elevation_sea_level) * math.cos(lat)
     z = abs(1 / ( math.sqrt(1 - math.pow(eccentricity,2) * math.sin(lat))) + elevation_sea_level) * math.sin(lat)
     R = array([ x * math.cos(lst_time), x * math.sin(lst_time), z])
     return R
 
-def calculate_position_and_velocity_vectors_topocentric(range, range_rate, elevation, elevation_rate, azimuth, azimuth_rate):
-
+def compute_position_and_velocity_vectors_topocentric(range, range_rate, elevation, elevation_rate, azimuth, azimuth_rate):    
+        
     rho_S = -1 * range * math.cos(elevation) * math.cos(azimuth)
     rho_E = range * math.cos(elevation) * math.sin(azimuth)
     rho_Z = range * math.sin(elevation)
@@ -52,10 +53,10 @@ def compute_r_v_geocentric(r_topo, v_topo, lat, lst_time, elevation_sea_level):
 
     # account for eccentricity of the earth, more accurate
     R = compute_station_coords_ellipsoid(lst_time, lat, elevation_sea_level) 
-    r_topo += R
+    # r_topo += R
 
     # for some reason the book doesn't account for eccentricity, so assuming that the earths radius is 1 DU all the way around, simply add 1 to the Z distance vector
-    # r_topo += [0,0,1]
+    r_topo += [0,0,1]
     
     rotation_matrix = array([
         [math.sin(lat) * math.cos(lst_time), -1 * math.sin(lst_time), math.cos(lat) * math.cos(lst_time)],
