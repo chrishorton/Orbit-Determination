@@ -6,46 +6,51 @@ class OrbitalElements(object):
         self.r = r
         self.v = v
         self.mu = 1
+        self.a = 0
+        self.e = 0
+        self.i = 0
+        self.Omega = 0
+        self.argp = 0
+        self.nu = 0
     
     
-    def h_n_e(self):
-        h = np.cross(r,v)
+    def get_orbital_elements(self):
+        h = np.cross(self.r,self.v)
         nhat = np.cross([0,0,1], h)
-        evec = np.multiply(( np.linalg.norm(v) ** 2 ) - (1 / np.linalg.norm(r)), r)
-        evec -= np.multiply(np.dot(r,v), v)
-        e = np.linalg.norm(evec)
+        evec = np.multiply(( np.linalg.norm(self.v) ** 2 ) - (1 / np.linalg.norm(self.r)), self.r)
+        evec -= np.multiply(np.dot(self.r,self.v), self.v)
+        self.e = np.linalg.norm(evec)
 
-        energy = np.linalg.norm(v) **2 / 2 - self.mu / np.linalg.norm(r)
+        energy = np.linalg.norm(self.v) **2 / 2 - self.mu / np.linalg.norm(self.r)
 
-        if e != 1:
-            a = -1 * self.mu / (2 * energy)
-            p = a * (1 - e ** 2)
+        if self.e != 1:
+            self.a = -1 * self.mu / (2 * energy)
+            p = self.a * (1 - self.e ** 2)
         else:
             p = np.linalg.norm(h) ** 2 / self.mu
-            a = "Infinity"
+            self.a = "Infinity"
 
-        i = math.acos(h[2] / np.linalg.norm(h))
+        self.i = math.acos(h[2] / np.linalg.norm(h))
 
-        Omega = math.acos( nhat[0] / np.linalg.norm(nhat) )
+        self.Omega = math.acos( nhat[0] / np.linalg.norm(nhat) )
 
         if nhat[1] < 0:
-            Omega = 360 - Omega
+            self.Omega = 360 - self.Omega
 
-        argp = math.acos( np.dot(nhat,evec) / (np.linalg.norm(nhat) * e) )
+        self.argp = math.acos( np.dot(nhat,evec) / (np.linalg.norm(nhat) * self.e) )
         
-        if e < 0:
-            argp = 360 - argp
+        if self.e < 0:
+            self.argp = 360 - self.argp
 
-        nu = math.acos( np.dot(evec,r) / ( e * np.linalg.norm(r)) )
+        self.nu = math.acos( np.dot(evec,self.r) / ( self.e * np.linalg.norm(self.r)) )
 
-        if np.dot(r,v) < 0:
-            nu = 360 - nu
+        if np.dot(self.r,self.v) < 0:
+            self.nu = 360 - self.nu
 
-        print("a: " + str(a) + "\ne: " + str(e) + "\ni: " + str(i) + "\nOmega: " + str(Omega) + "\nargp: " + str(argp) + "\nnu: " + str(nu))
-        return a, e, i, Omega, argp, nu
+        print("Orbital Elements\na: " + str(self.a) + "\ne: " + str(self.e) + "\ni: " + str(self.i) + "\nOmega: " + str(self.Omega) + "\nargp: " + str(self.argp) + "\nnu: " + str(self.nu))
 
-if __name__ == '__main__':
-    r = [2, 0,  0]
-    v = [0,1,0]
-    Element = OrbitalElements(r, v)
-    Element.h_n_e()
+# if __name__ == '__main__':
+#     v = [0,1,0]
+#     r = [2, 0,  0]
+#     Element = OrbitalElements(r, v)
+#     Element.get_orbital_elements()
