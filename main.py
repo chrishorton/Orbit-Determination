@@ -1,8 +1,15 @@
 import math
 import datetime
 import csv
+import matplotlib.pyplot as plt
+import numpy as np
+
 from Astro.calculations import *
 from Astro.preprocessor import *
+from Astro.orbit_propogator import OrbitalElements
+from Astro.plots import *
+from orbital import earth, KeplerianElements, Maneuver, plot, plot3d, elements_from_state_vector
+from astropy import time
 
 # conversion factors
 earth_radius_km = 6371
@@ -12,6 +19,9 @@ deg = math.pi/180.0
 # rotation of the earth rate
 wE = .00089 # rad/second
 omega = [0,0,wE]
+
+J1970 = time.Time('J1970', scale='utc')
+
 
 def site(lat, alt, time):
     print("Site")
@@ -25,11 +35,12 @@ def track(rho, rho_dot, elevation, elevation_rate, azimuth, azimuth_rate, days, 
 
     r_IJK, v_IJK = compute_r_v_geocentric(r_SEZ, v_SEZ, latitude, lst_time, elevation_sea_level)
     
-    print(r_IJK, v_IJK)
     return r_IJK, v_IJK
 
 
 if __name__ == '__main__':
+    amount_of_rows_to_compute = 10
+
     # data fields
     with open('Astro/data.csv') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
@@ -37,10 +48,32 @@ if __name__ == '__main__':
         for row in reader:
             if total == 0:
                 total += 1
+            elif amount_of_rows_to_compute+1 == total:
+                break
             else: 
                 latitude, longitude, elevation_sea_level, UT, date, p, p_dot, el, el_dot, az, az_dot = row
                 latitude, longitude, elevation_sea_level_canonical, days, rho, rho_dot, elevation, elevation_rate, azimuth, azimuth_rate, lst_time = process_input_data(latitude, longitude, elevation_sea_level, UT, date, p, p_dot, el, el_dot, az, az_dot)
                 r, v = track(rho, rho_dot, elevation, elevation_rate, azimuth, azimuth_rate, days, lst_time, elevation_sea_level_canonical)
+                
+                # r = np.array([4607312.46, -1531324.39, 4749270.39])
+                # v = np.array([4597.800926, 5516.878978, -2671.990580])
+                sum = 0
+                for _ in r:
+                    r[sum] = to_meters(r[sum], "earth")
+                    sum += 1
+                
+                sum = 0
+                for _ in v:
+                    v[sum] = to_meters_per_second(v[sum], "earth")
+                    sum += 1
+
+                print(r, v)
+
+                orbit_ = KeplerianElements.from_state_vector(r, v, body=earth, ref_epoch=J1970)
+
+                plot_ = plot3d(orbit_, animate=False)
+                plt.show()
+
                 total += 1
 
 
