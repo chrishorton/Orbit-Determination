@@ -54,6 +54,12 @@ def normalize_site_elevation(elevation_sea_level):
         print("There was an error computing site elevation.")
         return 0
 
+def to_meters(DU, reference_orbit):
+    return DU * earth_radius_km * 1000
+
+def to_meters_per_second(DU_TU, reference_orbit):
+    return DU_TU * (1/.1264963205) * 1000
+
 def to_canonical_km(km, reference_orbit):
     # DU (distance unit) is radius of the reference orbit. The reference orbit will be a minimum altitude circular orbit just grazing the surface of the planet
     # Define our TU (time unit) such that the speed of a satelite in the reference orbit is 1 DU/TU then gravitational parameter mu = 1 DU^3/TU^3

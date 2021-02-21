@@ -53,10 +53,10 @@ def compute_r_v_geocentric(r_topo, v_topo, lat, lst_time, elevation_sea_level):
 
     # account for eccentricity of the earth, more accurate
     R = compute_station_coords_ellipsoid(lst_time, lat, elevation_sea_level) 
-    # r_topo += R
+    r_topo += R
 
     # for some reason the book doesn't account for eccentricity, so assuming that the earths radius is 1 DU all the way around, simply add 1 to the Z distance vector
-    r_topo += [0,0,1]
+    # r_topo += [0,0,1]
     
     rotation_matrix = array([
         [math.sin(lat) * math.cos(lst_time), -1 * math.sin(lst_time), math.cos(lat) * math.cos(lst_time)],
